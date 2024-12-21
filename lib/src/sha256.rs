@@ -4,7 +4,7 @@ use crate::U256;
 use serde::{Deserialize, Serialize};
 use sha256::digest;
 
-#[derive(Clone, Copy, Serialize, Deserialize, Debug, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct Hash(U256);
 
 impl Hash {
@@ -23,6 +23,13 @@ impl Hash {
         let hash_bytes = hex::decode(hash).unwrap();
         let hash_array: [u8; 32] = hash_bytes.as_slice().try_into().unwrap();
         Self(U256::from(hash_array))
+    }
+
+    // convert to bytes
+    pub fn as_bytes(&self) -> [u8; 32] {
+        let mut bytes: Vec<u8> = vec![0; 32];
+        self.0.to_little_endian(&mut bytes);
+        bytes.as_slice().try_into().unwrap()
     }
 
     // check if a hash matches a target
