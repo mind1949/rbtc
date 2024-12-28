@@ -4,9 +4,11 @@ use crate::error::{BtcError, Result};
 use crate::sha256::Hash;
 use crate::types::transaction::{Transaction, TransactionOutput};
 use crate::util::MerkleRoot;
+use crate::util::Saveable;
 use crate::U256;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use std::io::{Error as IoError, ErrorKind as IoErrorKind};
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Block {
@@ -195,5 +197,17 @@ impl BlockHeader {
             }
         }
         false
+    }
+}
+
+impl Saveable for Block {
+    fn load<I: std::io::Read>(reader: I) -> std::io::Result<Self> {
+        ciborium::de::from_reader(reader)
+            .map_err(|_| IoError::new(IoErrorKind::InvalidData, "failed to deserialize Blockchain"))
+    }
+
+    fn save<O: std::io::Write>(&self, writer: O) -> std::io::Result<()> {
+        ciborium::ser::into_writer(self, writer)
+            .map_err(|_| IoError::new(IoErrorKind::InvalidData, "Failed to serialize Blockchain"))
     }
 }

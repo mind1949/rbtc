@@ -1,6 +1,8 @@
 use crate::crypto::{PublicKey, Signature};
 use crate::sha256::Hash;
+use crate::util::Saveable;
 use serde::{Deserialize, Serialize};
+use std::io::{Error as IoError, ErrorKind as IoErrorKind};
 use uuid::Uuid;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -35,5 +37,21 @@ pub struct TransactionOutput {
 impl TransactionOutput {
     pub fn hash(&self) -> Hash {
         Hash::hash(self)
+    }
+}
+
+impl Saveable for Transaction {
+    fn load<I: std::io::Read>(reader: I) -> std::io::Result<Self> {
+        ciborium::de::from_reader(reader).map_err(|_| {
+            IoError::new(
+                IoErrorKind::InvalidData,
+                "failed to deserialize Transaction",
+            )
+        })
+    }
+
+    fn save<O: std::io::Write>(&self, writer: O) -> std::io::Result<()> {
+        ciborium::ser::into_writer(self, writer)
+            .map_err(|_| IoError::new(IoErrorKind::InvalidData, "Failed to serialize Transaction"))
     }
 }

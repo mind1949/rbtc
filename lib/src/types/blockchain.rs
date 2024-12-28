@@ -5,10 +5,12 @@ use crate::sha256::Hash;
 use crate::types::block::Block;
 use crate::types::transaction::{Transaction, TransactionOutput};
 use crate::util::MerkleRoot;
+use crate::util::Saveable;
 use crate::U256;
 use bigdecimal::BigDecimal;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use std::io::{Error as IoError, ErrorKind as IoErrorKind};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Blockchain {
@@ -291,5 +293,17 @@ impl Blockchain {
         // if the new target if more than the minimum target
         // set it to the minumum target
         self.target = new_target.min(crate::MIN_TARGET);
+    }
+}
+
+impl Saveable for Blockchain {
+    fn load<I: std::io::Read>(reader: I) -> std::io::Result<Self> {
+        ciborium::de::from_reader(reader)
+            .map_err(|_| IoError::new(IoErrorKind::InvalidData, "failed to deserialize Blockchain"))
+    }
+
+    fn save<O: std::io::Write>(&self, writer: O) -> std::io::Result<()> {
+        ciborium::ser::into_writer(self, writer)
+            .map_err(|_| IoError::new(IoErrorKind::InvalidData, "Failed to serialize Blockchain"))
     }
 }
