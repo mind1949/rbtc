@@ -2,5 +2,5 @@ mod block;
 mod blockchain;
 mod transaction;
 
-pub use block::Block;
-pub use transaction::Transaction;
+pub use block::{Block, BlockHeader};
+pub use transaction::{Transaction, TransactionOutput};

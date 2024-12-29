@@ -12,7 +12,7 @@ pub struct Transaction {
 }
 
 impl Transaction {
-    fn new(inputs: Vec<TransactionInput>, outputs: Vec<TransactionOutput>) -> Self {
+    pub fn new(inputs: Vec<TransactionInput>, outputs: Vec<TransactionOutput>) -> Self {
         Self { inputs, outputs }
     }
 
