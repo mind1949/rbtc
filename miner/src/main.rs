@@ -4,8 +4,6 @@ use btclib::network::Message;
 use btclib::types::Block;
 use btclib::util::Saveable;
 use clap::Parser;
-use std::env;
-use std::process::exit;
 use std::sync::{
     atomic::{AtomicBool, Ordering},
     Arc,
