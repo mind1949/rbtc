@@ -29,6 +29,7 @@ pub const BLOCK_TRANSACTION_CAP: usize = 20;
 
 pub mod crypto;
 pub mod error;
+pub mod network;
 pub mod sha256;
 pub mod types;
 pub mod util;
