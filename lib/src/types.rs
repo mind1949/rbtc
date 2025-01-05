@@ -4,4 +4,4 @@ mod transaction;
 
 pub use block::{Block, BlockHeader};
 pub use blockchain::Blockchain;
-pub use transaction::{Transaction, TransactionOutput, TransactionInput};
+pub use transaction::{Transaction, TransactionInput, TransactionOutput};
