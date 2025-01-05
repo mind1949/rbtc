@@ -15,8 +15,9 @@ pub struct Signature(pub ECDSASignature<Secp256k1>);
 
 impl Signature {
     // sign a crate::types::TransactionOutput from its Sha256 hash
-    pub fn sign_output(output_hash: &Hash, private_key: &mut PrivateKey) -> Self {
-        let signing_key = &mut private_key.0;
+    pub fn sign_output(output_hash: &Hash, private_key: &PrivateKey) -> Self {
+        // FIXME:
+        let signing_key = &mut private_key.0.clone();
         let signature = signing_key.sign(&output_hash.as_bytes());
         Signature(signature)
     }
@@ -30,7 +31,7 @@ impl Signature {
     }
 }
 
-#[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, PartialOrd, Eq, Ord)]
 pub struct PublicKey(VerifyingKey<Secp256k1>);
 
 impl Saveable for PublicKey {
